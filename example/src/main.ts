@@ -6,10 +6,12 @@
 import { createAbrovaAuth, isAbrovaAuthError } from '@abrova/auth-web';
 
 const API_KEY: string = import.meta.env.VITE_ABROVA_API_KEY || 'ab_live_YOUR_PUBLIC_KEY';
+// Optional: another Auth server, for example one you run yourself. Unset = the default server.
+const SERVER_URL: string | undefined = import.meta.env.VITE_ABROVA_AUTH_URL || undefined;
 
 // Memory storage (the default): the user signs in again after a reload.
 // To keep the session, pass `storage: localStorageStorage()` (read the README's warning first).
-const auth = createAbrovaAuth({ apiKey: API_KEY });
+const auth = createAbrovaAuth({ apiKey: API_KEY, baseUrl: SERVER_URL });
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
