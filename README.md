@@ -44,7 +44,7 @@ npm install @abrova/auth-web
 yarn add @abrova/auth-web
 ```
 
-Requires a browser with `fetch` and `crypto.getRandomValues` (every current browser). Abrova Auth has no server SDK.
+Requires a browser with `fetch` and `crypto.getRandomValues` (every current browser). For your server (custom claims, users) there is [`@abrova/auth-admin`](https://abrova.ir/docs/auth/admin-sdk).
 
 ## Quick start
 
@@ -153,6 +153,21 @@ const me = await auth.getMe();     // { id, anonymous, emailVerified, createdAt,
 await auth.signOut();              // this device
 await auth.signOutEverywhere();    // every device
 await auth.deleteAccount();        // deletes the user, then signs out
+```
+
+## Custom claims
+
+Your server sets custom claims for a user with the server secret (`setCustomUserClaims`, see
+[Custom claims](https://abrova.ir/docs/auth/custom-claims)), for example `{ "plan": "pro" }`. Every token of the
+user carries them, and Abrova Sync rules read them as `auth.token.plan`. In the app, read them to show things
+(a "Pro" badge): access is still decided on the server.
+
+```ts
+const result = await auth.getTokenResult();
+if (result?.claims.plan === 'pro') showProBadge();
+
+// Right after your server changed the claims ("Check my purchase"):
+await auth.getTokenResult({ forceRefresh: true });
 ```
 
 ## Errors
