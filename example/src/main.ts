@@ -4,6 +4,7 @@
  * Uses the public API key only. Put yours in `.env` (see `.env.example`); the placeholder below is not a real key.
  */
 import { createAbrovaAuth, isAbrovaAuthError } from '@abrova/auth-web';
+import { openSignIn } from '@abrova/auth-web/ui';
 
 const API_KEY: string = import.meta.env.VITE_ABROVA_API_KEY || 'ab_live_YOUR_PUBLIC_KEY';
 // Optional: another Auth server, for example one you run yourself. Unset = the default server.
@@ -79,6 +80,13 @@ if (API_KEY.includes('YOUR_PUBLIC_KEY')) {
 }
 
 // ── Actions ──────────────────────────────────────────────────────────────────────────────────────
+
+$('ui-btn').addEventListener('click', () =>
+  run('Ready-made sign-in', async () => {
+    const result = await openSignIn(auth, { appName: 'Example', allowGuest: true });
+    return result ? `signed in as ${result.userId}` : 'closed';
+  }),
+);
 
 $('anon-btn').addEventListener('click', () =>
   run('Signed in anonymously', async () => (await auth.signInAnonymously()).userId),

@@ -1,3 +1,24 @@
+## [0.4.0] - 2026-11-08
+
+- Ready-made sign-in screens, like FirebaseUI, for any framework (or none): `import { openSignIn } from
+  '@abrova/auth-web/ui'`, then `const result = await openSignIn(auth)`. It opens a dialog (the whole screen on
+  phones) and answers `{ userId }` once the user signed in, or null when they closed it. `mountSignIn(element, auth)`
+  puts the same form on any page.
+  - Shows only the methods turned on in the Console: e-mail and password (sign in, create account, forgot password),
+    magic link, Telegram, Google, Apple and guest.
+  - English and Persian (right to left), from the browser's language or `languageCode`. The e-mails Abrova sends
+    follow the screen's language, unless you set `auth.languageCode` yourself.
+  - Its own styles in a shadow root, so your page's CSS cannot break it. Change the look with `color`, `appName`,
+    `logoUrl` or CSS variables such as `--abrova-accent`; dark mode follows the system.
+  - Google and Apple: pass a function that gets an ID token for the given hashed nonce (Google Identity Services,
+    Sign in with Apple JS). Magic link: pass `magicLinkRedirectUrl`.
+  - "Continue as guest" shows only with `allowGuest: true`: every guest is a new user and counts toward your plan.
+  - No new dependencies.
+- `sendPasswordReset`: `redirectUrl` is optional; without it the link opens Abrova's own reset page.
+- `baseUrl`: the Abrova Auth server the client talks to.
+- `isAbrovaAuthError` also recognises an error from another copy of the SDK (for example the CommonJS and ESM builds
+  in one app).
+
 ## [0.3.0] - 2026-11-07
 
 - `languageCode` and `useDeviceLanguage()`, like Firebase: the language of the e-mails Abrova sends this user

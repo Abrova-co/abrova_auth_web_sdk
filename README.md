@@ -101,6 +101,33 @@ After a sign-in, a sign-out or a switch to another user, ask the other SDKs to f
 `sync.refreshUserToken()`), ideally from `onAuthStateChanged`. More:
 [Use with other Abrova products](https://abrova.ir/cloud/abrova-auth/docs/other-products).
 
+## Ready-made sign-in screen
+
+Like FirebaseUI, for any framework (or none): Abrova's sign-in dialog, with no forms to build. It shows only the
+methods turned on in the Console and answers once the user signed in, or `null` when they closed it.
+
+```typescript
+import { openSignIn } from '@abrova/auth-web/ui';
+
+const result = await openSignIn(auth, { appName: 'My Shop' });
+if (result) console.log('signed in', result.userId);
+```
+
+It is a dialog on wide screens and the whole screen on phones. To put the form on a page of your own:
+`mountSignIn(document.getElementById('sign-in')!, auth, { onSignedIn: (r) => ... })` (returns `{ destroy() }`).
+
+| Option | What it does |
+|---|---|
+| `appName`, `logoUrl` | The title ("Sign in to My Shop") and an image above it |
+| `languageCode` | `en` or `fa` (right to left). Default: the browser's language. The e-mails follow it unless you set `auth.languageCode` yourself |
+| `color` | The button colour; or the CSS variable `--abrova-accent` (also `--abrova-bg`, `--abrova-fg`, `--abrova-radius`, `--abrova-font`) |
+| `allowGuest` | Shows "Continue as guest" when anonymous sign-in is on. Off by default: every guest is a new user and counts toward your plan |
+| `google`, `apple` | A function that gets an ID token for the hashed nonce it is given (Google Identity Services, Sign in with Apple JS). The button shows only when you pass it |
+| `magicLinkRedirectUrl` | A page of your site; shows the magic link button. That page finishes it with `signInWithMagicLink` |
+| `verifyRedirectUrl`, `resetRedirectUrl` | Your own pages for the confirm and reset links. Default: Abrova's pages |
+
+The form has its own styles in a shadow root, so your page's CSS cannot break it; dark mode follows the system.
+
 ## Sign-in methods
 
 ```typescript
