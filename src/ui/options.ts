@@ -13,8 +13,10 @@ export interface SignInUiOptions {
   appName?: string;
   /** An image URL shown above the title, for example your app icon. */
   logoUrl?: string;
-  /** `en` or `fa`. Default: the browser's language (English when it is neither). The e-mails follow it too, unless
-   * you set `auth.languageCode` yourself. */
+  /** The screen's language, a code such as `en`. Default: the browser's language (English when the screen doesn't
+   * have it). The e-mails follow it too, unless you set `auth.languageCode` yourself.
+   * Persian: `fa`, right to left.
+   */
   languageCode?: string;
   /** The button colour, for example `#1f6feb`. You can also set the CSS variable `--abrova-accent`. */
   color?: string;

@@ -116,12 +116,29 @@ describe('sign-in screens (web)', () => {
     expect(f.calls.at(-1)?.headers['x-abrova-locale']).toBe('fa');
   });
 
+  it('Persian from fa_IR or FA as well', async () => {
+    const f = fake(['password']);
+    mount(f.auth, { languageCode: 'FA_ir' });
+    await settle();
+    expect(shadow().querySelector('.abrova')?.getAttribute('dir')).toBe('rtl');
+  });
+
+  it('a language the screen does not have, or an odd code, shows English', async () => {
+    for (const code of ['de', 'constructor', '__proto__', '']) {
+      const f = fake(['password']);
+      mount(f.auth, { languageCode: code });
+      await settle();
+      expect(text()).toContain('Sign in');
+      expect(shadow().querySelector('.abrova')?.getAttribute('dir')).toBe('ltr');
+    }
+  });
+
   it('keeps a language the app set for the e-mails', async () => {
     const f = fake(['password']);
-    f.auth.languageCode = 'en';
-    mount(f.auth, { languageCode: 'fa' });
+    f.auth.languageCode = 'de';
+    mount(f.auth, { languageCode: 'en' });
     await settle();
-    expect(f.auth.languageCode).toBe('en');
+    expect(f.auth.languageCode).toBe('de');
   });
 
   it('sign-up that needs a confirmed e-mail: link to Abrova’s confirm page', async () => {
@@ -292,14 +309,14 @@ describe('the CommonJS build', () => {
 describe('the e-mail language', () => {
   it('follows the open screen, is given back on close, and never replaces the app’s own choice', async () => {
     const f = fake(['password']);
-    const m = mountSignIn(document.body.appendChild(document.createElement('div')), f.auth, { languageCode: 'fa' });
+    const m = mountSignIn(document.body.appendChild(document.createElement('div')), f.auth, { languageCode: 'en' });
     target = document.body.lastElementChild as HTMLElement;
     await settle();
-    expect(f.auth.languageCode).toBe('fa');
+    expect(f.auth.languageCode).toBe('en');
     m.destroy();
     expect(f.auth.languageCode).toBeNull();
     f.auth.languageCode = 'en-US'; // the app chooses
-    mount(f.auth, { languageCode: 'fa' });
+    mount(f.auth, { languageCode: 'en' });
     await settle();
     expect(f.auth.languageCode).toBe('en-US');
   });
@@ -308,11 +325,11 @@ describe('the e-mail language', () => {
 describe('the e-mail language with two screens', () => {
   it('a screen closing while another is open does not take the language away', async () => {
     const f = fake(['password']);
-    const a = mountSignIn(document.body.appendChild(document.createElement('div')), f.auth, { languageCode: 'fa' });
-    const b = mountSignIn(document.body.appendChild(document.createElement('div')), f.auth, { languageCode: 'fa' });
+    const a = mountSignIn(document.body.appendChild(document.createElement('div')), f.auth, { languageCode: 'en' });
+    const b = mountSignIn(document.body.appendChild(document.createElement('div')), f.auth, { languageCode: 'en' });
     await new Promise((r) => setTimeout(r, 20));
     a.destroy();
-    expect(f.auth.languageCode).toBe('fa');
+    expect(f.auth.languageCode).toBe('en');
     b.destroy();
     expect(f.auth.languageCode).toBeNull();
   });
