@@ -125,6 +125,10 @@ It is a dialog on wide screens and the whole screen on phones. To put the form o
 | `google`, `apple` | A function that gets an ID token for the hashed nonce it is given (Google Identity Services, Sign in with Apple JS). The button shows only when you pass it |
 | `magicLinkRedirectUrl` | A page of your site; shows the magic link button. That page finishes it with `signInWithMagicLink` |
 | `verifyRedirectUrl`, `resetRedirectUrl` | Your own pages for the confirm and reset links. Default: Abrova's pages |
+| `continueUrl` | One of your link addresses. Abrova's confirm and reset pages show a "Continue" button to it when they are done |
+
+When your project requires a confirmed e-mail and someone tries to sign in before confirming, the screen offers
+"Send again", which e-mails a new confirmation link.
 
 The form has its own styles in a shadow root, so your page's CSS cannot break it; dark mode follows the system.
 
@@ -138,6 +142,9 @@ await auth.sendPasswordReset({ email, redirectUrl: 'https://app.example.com/rese
 await auth.resetPassword({ token, password });          // token from the link's ?token=
 await auth.verifyEmail({ token });
 
+// Project requires a confirmed e-mail and signing in failed with EMAIL_NOT_VERIFIED: send the link again
+await auth.resendVerification({ email, password });
+
 // Magic link
 await auth.sendMagicLink({ email, redirectUrl: 'https://app.example.com/magic' });
 await auth.signInWithMagicLink({ token: new URL(location.href).searchParams.get('token')! });
@@ -147,7 +154,19 @@ const { sent, botUrl } = await auth.requestTelegramCode({ phone: '+37491234567' 
 await auth.verifyTelegramCode({ phone: '+37491234567', code: '123456' });
 ```
 
-`redirectUrl` must start with one of the redirect URLs allowed in your project's Abrova Auth settings.
+`redirectUrl` must be under one of the link addresses in your project's Abrova Auth settings (same scheme, host and
+port; https, your app's own scheme, or `http://localhost:<port>` while developing). Leave it out to use Abrova's own
+confirm and reset pages.
+
+#### Back to your app after the link
+
+Like Firebase's continue URL: pass `continueUrl` (one of your link addresses) to `signUpWithEmail`,
+`sendEmailVerification`, `sendPasswordReset` or `resendVerification`. When the link opens Abrova's own page, that page
+shows a "Continue" button to it once the e-mail is confirmed or the password is saved.
+
+```typescript
+await auth.sendPasswordReset({ email, continueUrl: 'https://app.example.com/sign-in' });
+```
 
 ### Apple and Google
 
