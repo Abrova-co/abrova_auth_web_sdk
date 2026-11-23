@@ -125,6 +125,7 @@ It is a dialog on wide screens and the whole screen on phones. To put the form o
 | `google`, `apple` | A function that gets an ID token for the hashed nonce it is given (Google Identity Services, Sign in with Apple JS). The button shows only when you pass it |
 | `magicLinkRedirectUrl` | A page of your site; shows the magic link button. That page finishes it with `signInWithMagicLink` |
 | `verifyRedirectUrl`, `resetRedirectUrl` | Your own pages for the confirm and reset links. Default: Abrova's pages |
+| `sendVerificationEmail` | `false`: no confirm e-mail when someone creates an account, for a project that doesn't require a confirmed e-mail. Default: `true` |
 | `continueUrl` | One of your link addresses. Abrova's confirm and reset pages show a "Continue" button to it when they are done |
 
 When your project requires a confirmed e-mail and someone tries to sign in before confirming, the screen offers

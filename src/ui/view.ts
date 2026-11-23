@@ -33,15 +33,37 @@ function errorBanner(c: SignInController): HTMLElement | null {
 function field(c: SignInController, key: string, label: string, value: string, set: (v: string) => void, opts: {
   type?: string; autocomplete?: string; error?: string | null; ltr?: boolean; placeholder?: string; inputmode?: string;
 } = {}): HTMLElement {
+  const password = opts.type === 'password';
   const id = `abrova-${key}`;
   const input = h('input', {
-    id, name: key, 'data-k': key, type: opts.type ?? 'text', autocomplete: opts.autocomplete, placeholder: opts.placeholder,
+    id, name: key, 'data-k': key, type: password && c.passwordVisible ? 'text' : (opts.type ?? 'text'), autocomplete: opts.autocomplete, placeholder: opts.placeholder,
     inputmode: opts.inputmode, dir: opts.ltr ? 'ltr' : undefined, disabled: c.busy, 'aria-invalid': opts.error ? 'true' : undefined,
     autocapitalize: 'off', spellcheck: 'false',
   }) as HTMLInputElement;
   input.value = value;
   input.addEventListener('input', () => set(input.value));
-  return h('label', { class: 'field', for: id }, h('span', { class: 'label' }, label), input, opts.error ? h('span', { class: 'field-error' }, opts.error) : null);
+  const box = password ? h('span', { class: 'password' }, input, eyeButton(c, key, input)) : input;
+  return h('label', { class: 'field', for: id }, h('span', { class: 'label' }, label), box, opts.error ? h('span', { class: 'field-error' }, opts.error) : null);
+}
+
+const EYE = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/></svg>';
+
+/** The eye button of a password field: shows or hides what was typed, in place (the field keeps its focus). */
+function eyeButton(c: SignInController, key: string, input: HTMLInputElement): HTMLElement {
+  const b = h('button', { type: 'button', class: 'eye', 'data-k': `${key}-eye`, disabled: c.busy }) as HTMLButtonElement;
+  const paint = () => {
+    b.innerHTML = c.passwordVisible ? EYE_OFF : EYE; // fixed markup, never user text
+    b.setAttribute('aria-label', c.strings.t(c.passwordVisible ? 'hidePassword' : 'showPassword'));
+    b.setAttribute('aria-pressed', String(c.passwordVisible));
+  };
+  paint();
+  b.addEventListener('click', () => {
+    c.passwordVisible = !c.passwordVisible;
+    input.type = c.passwordVisible ? 'text' : 'password';
+    paint();
+  });
+  return b;
 }
 
 function primary(c: SignInController, key: string, label: string): HTMLElement {

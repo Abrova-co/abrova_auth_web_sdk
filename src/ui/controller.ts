@@ -30,6 +30,8 @@ export class SignInController {
   code = '';
   emailError: string | null = null;
   passwordError: string | null = null;
+  /** The password is shown as typed (the eye button); hidden again on every new screen. */
+  passwordVisible = false;
 
   private closed = false;
   /** The screen set `auth.languageCode` (it was unset) and gives it back on close. */
@@ -115,6 +117,7 @@ export class SignInController {
 
   go(view: UiView): void {
     this.error = null;
+    this.passwordVisible = false;
     this.emailError = null;
     this.passwordError = null;
     if (view === 'telegramPhone') {
@@ -135,7 +138,11 @@ export class SignInController {
       const r = await this.auth.signUpWithEmail({
         email: this.email.trim(),
         password: this.password,
-        redirectUrl: this.options.verifyRedirectUrl ?? `${this.auth.baseUrl}/pages/verify`,
+        // Without a link the server only sends one when the project requires a confirmed e-mail.
+        redirectUrl:
+          this.options.sendVerificationEmail === false
+            ? undefined
+            : (this.options.verifyRedirectUrl ?? `${this.auth.baseUrl}/pages/verify`),
         continueUrl: this.options.continueUrl,
       });
       if (r.signedIn) return this.done({ userId: r.userId });

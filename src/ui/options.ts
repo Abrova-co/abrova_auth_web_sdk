@@ -37,4 +37,8 @@ export interface SignInUiOptions {
   /** One of the project's link addresses. Abrova's own confirm and reset pages show a "Continue" button to it when
    * they are done, so people get back to your app. */
   continueUrl?: string;
+  /** Sends the confirm e-mail when someone creates an account (default true). Set it to false when your project
+   * doesn't require a confirmed e-mail and you don't want people to get that e-mail. A project that requires a
+   * confirmed e-mail still sends it, else the account could never sign in. */
+  sendVerificationEmail?: boolean;
 }

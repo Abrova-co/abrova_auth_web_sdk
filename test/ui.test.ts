@@ -141,6 +141,38 @@ describe('sign-in screens (web)', () => {
     expect(f.auth.languageCode).toBe('de');
   });
 
+  it('sendVerificationEmail: false asks for no confirm e-mail and signs in at once', async () => {
+    const f = fake(['password'], { '/v1/password/sign-up': () => ({ status: 200, body: { userId: 'u9', verificationSent: false, session: f.session('u9') } }) });
+    const signedIn = mount(f.auth, { sendVerificationEmail: false });
+    await settle();
+    await click('to-sign-up');
+    await type('sign-up-email', 'new@example.com');
+    await type('sign-up-password', 'a-good-password');
+    await click('sign-up');
+    expect('redirectUrl' in f.bodies('/v1/password/sign-up')[0]).toBe(false);
+    expect(signedIn.map((u: { userId: string }) => u.userId)).toEqual(['u9']);
+  });
+
+  it('the eye button shows and hides the password in place; a new screen hides it again', async () => {
+    const f = fake(['password']);
+    mount(f.auth);
+    await settle();
+    const input = () => el('password') as HTMLInputElement;
+    expect(input().type).toBe('password');
+    expect(el('password-eye')?.getAttribute('aria-label')).toBe('Show password');
+    await type('password', 'a-good-password');
+    const before = input();
+    await click('password-eye');
+    expect(input()).toBe(before);
+    expect(input().type).toBe('text');
+    expect(input().value).toBe('a-good-password');
+    expect(el('password-eye')?.getAttribute('aria-label')).toBe('Hide password');
+    await click('to-sign-up');
+    expect((el('sign-up-password') as HTMLInputElement).type).toBe('password');
+    await click('sign-up-password-eye');
+    expect((el('sign-up-password') as HTMLInputElement).type).toBe('text');
+  });
+
   it('sign-up that needs a confirmed e-mail: link to Abrova’s confirm page', async () => {
     const f = fake(['password'], { '/v1/password/sign-up': () => ({ status: 200, body: { userId: 'u9', verificationSent: true, session: null } }) });
     const signedIn = mount(f.auth);

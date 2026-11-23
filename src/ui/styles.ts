@@ -35,6 +35,10 @@ form { display: flex; flex-direction: column; gap: 12px; }
 input { width: 100%; height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius); background: transparent; color: var(--fg); }
 input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
 input[aria-invalid="true"] { border-color: var(--error-fg); }
+.password { position: relative; display: block; }
+.password input { padding-inline-end: 44px; }
+.eye { position: absolute; inset-block: 0; inset-inline-end: 0; width: 44px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: var(--muted); cursor: pointer; border-radius: var(--radius); }
+.eye:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .field-error { font-size: 13px; color: var(--error-fg); }
 .error { background: var(--error-bg); color: var(--error-fg); padding: 10px 12px; border-radius: var(--radius); margin-bottom: 12px; }
 button { cursor: pointer; }

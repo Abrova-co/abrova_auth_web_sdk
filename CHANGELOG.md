@@ -1,3 +1,14 @@
+## [0.5.1] - 2026-11-23
+
+- Ready-made sign-in screen: new option `sendVerificationEmail`. Set it to `false` when your project doesn't require a
+  confirmed e-mail and you don't want people to get the confirm e-mail after creating an account; they are signed in at
+  once. A project that requires a confirmed e-mail still sends it. Default `true`, as before.
+  ```js
+  await openSignIn(auth, { sendVerificationEmail: false });
+  ```
+- Ready-made sign-in screen: an eye button on the password fields shows or hides what was typed ("Show password",
+  in Persian too). Hidden again on every new screen.
+
 ## [0.5.0] - 2026-11-16
 
 - `resendVerification({ email, password })`: when your project requires a confirmed e-mail, someone who can't sign in
